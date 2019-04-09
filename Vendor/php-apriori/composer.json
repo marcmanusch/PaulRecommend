@@ -1,0 +1,34 @@
+{
+  "name": "codedheartinside/apriori",
+  "description": "Apriori data analysing algorithm written within PHP.",
+  "keywords": ["apriori", "data mining"],
+  "homepage": "https://github.com/codedheartinside/php-apriori.git",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Wim Ulkeman",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php" : ">=5.5.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit" : "4.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "CodedHeartInside\\DataMining\\Apriori\\": ""
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {  
+      "CodedHeartInside\\DataMining\\Apriori\\Tests\\": "Tests"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../engine/Shopware/Components/Plugin/schema/config.xsd">
+    <elements>
+
+        <!-- Grundeinstellungen -->
+        <element type="boolean">
+            <name>active</name>
+            <label>Aktiv</label>
+        </element>
+
+        <element type="boolean">
+            <name>otherData</name>
+            <label>Benutze andere Daten</label>
+        </element>
+
+        <element type="text">
+            <name>support</name>
+            <label>Support</label>
+        </element>
+
+        <element type="text">
+            <name>confidence</name>
+            <label>Confidence</label>
+        </element>
+
+        <element type="date">
+            <name>date</name>
+            <label>Datum ab</label>
+        </element>
+
+    </elements>
+</config>

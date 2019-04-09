@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="bcccf2cb-0284-44b5-91f6-b3c946af1294" name="GIGAHOST" url="http://ftp.paulrecommend.mygigahost.de">
+        <fileTransfer host="ftp.paulrecommend.mygigahost.de" port="21" rootFolder="/public_html/custom/plugins/PaulRecommend">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="21" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

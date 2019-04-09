@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+
+<container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://symfony.com/schema/dic/services"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+
+        <service id="paul_recommend.subscriber.template_registration"
+                 class="PaulRecommend\Subscriber\TemplateRegistration">
+            <argument type="service" id="template"/>
+            <argument>%paul_recommend.plugin_dir%</argument>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service class="PaulRecommend\Subscriber\CollectConfig" id="paul_recommend.subscriber.collect_config">
+            <argument id="service_container" type="service"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service class="PaulRecommend\Subscriber\CollectRecommendedProducts" id="paul_recommend.subscriber.collect_recommended_products">
+            <argument id="service_container" type="service"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service class="Shopware_Controllers_Frontend_RecommendedBasket" id="shopware_controllers_frontend_recommended_basket">
+            <call method="setFront">
+                <argument id="front" type="service"/>
+            </call>
+        </service>
+
+
+    </services>
+</container>

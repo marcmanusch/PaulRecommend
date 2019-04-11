@@ -28,6 +28,11 @@
             </call>
         </service>
 
+        <service class="PaulRecommend\Subscriber\CalculateRecommenderArticles" id="paul_recommend.subscriber.calculate_recommender_articles">
+            <argument id="service_container" type="service"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
 
     </services>
 </container>

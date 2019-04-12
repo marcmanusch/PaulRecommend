@@ -133,6 +133,10 @@ class CollectRecommendedProducts implements SubscriberInterface
         // Apriori Array
         $apriori = $associator->apriori();
 
+        //DEVELOP Ausgabe
+        $view->assign('develop', $apriori);
+        //DEVELOP Ausgabe ENDE
+
         $aprioriArticles = array();
 
         // !!!! Begrenze Anzahl auf 6 Artikel !!!!

@@ -62,13 +62,10 @@
 
 
 <!-- Dev -->
-{*<h2>Samples</h2>
-<pre>
-    {print_r($samples)}
-</pre>
+{*<h2>DEVELOP</h2>
 
 <h2>Apriori</h2>
 <pre>
-    {print_r($apriori)}
+    {print_r($develop)}
 </pre>*}
 <!-- Dev -->

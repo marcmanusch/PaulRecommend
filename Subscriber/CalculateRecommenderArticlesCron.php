@@ -2,17 +2,28 @@
 /**
  * Created by PhpStorm.
  * User: marc
- * Date: 10.11.18
- * Time: 16:35
+ * Date: 09.11.18
+ * Time: 15:36
  */
 
 namespace PaulRecommend\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Template_Manager;
+use Shopware\Components\Plugin\ConfigReader;
 use PaulRecommend\Vendor\Apriori;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class CollectRecommendedProducts implements SubscriberInterface
+
+/**
+ * Class CalculateRecommenderArticlesCron
+ * @package PaulRecommend\Subscriber
+ *
+ * In dieser Klasse werden die vorgeschlagenen Produkte berrechnet.
+ * Dieser prozess wird durch einen CRON angestoßen, sodass die Berrechnung NICHT
+ * auf Echtzeit-Daten läuft. Hierdurch wird eine hohe Performance erreicht.
+ */
+class CalculateRecommenderArticlesCron implements SubscriberInterface
 {
     /** @var  ContainerInterface */
     private $container;
@@ -32,20 +43,20 @@ class CollectRecommendedProducts implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'onPostDispatchDetail',
+            'Shopware_CronJob_CalculateRecommenderArticlesCron' => 'CalculateRecommenderArticles'
         ];
     }
 
     /**
-     * @param \Enlight_Event_EventArgs $args
+     * @param \Shopware_Components_Cron_CronJob $job
      */
-    public function onPostDispatchDetail(\Enlight_Event_EventArgs $args)
+    public function CalculateRecommenderArticles(\Shopware_Components_Cron_CronJob $job)
     {
-        /** @var \Enlight_Controller_Action $controller */
-        $controller = $args->get('subject');
-        $view = $controller->View();
-        $view->addTemplateDir($this->pluginDirectory . '/Resources/Views');
+        //Testausgabe
+        echo('YES!');
+
         $config = $this->container->get('shopware.plugin.config_reader')->getByPluginName('PaulRecommend');
+
 
         // get plugin settings
         $active = $config['active'];
@@ -54,16 +65,11 @@ class CollectRecommendedProducts implements SubscriberInterface
         $date_from = $config['date'];
         $otherData = $config['otherData'];
 
-        // Hole die aktuelle ordernumber (Bestellnummer / MPN) aus der aktuellen View.
-        $sArticle = $view->getAssign('sArticle');
-        $ordernumber = $sArticle['ordernumber'];
-
-        // Mit der ordernumber wird nun der APRIORI-Algorithmus aufgerufen um die passenden Produkte zu finden.
 
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->container->get('dbal_connection');
 
-        if(!$otherData) {
+        if (!$otherData) {
             /**
              * Wenn in der Plugin-Config der Haken "Benutze andere Daten" gesetzt wird, wird der ELSE part
              * aufgerufen. Die Daten werden dann aus der DB-Tabelle "apriori_liste" genommen. Diese Daten
@@ -72,19 +78,40 @@ class CollectRecommendedProducts implements SubscriberInterface
              * Die Abfrage aus dem IF part holt sich die Daten der orders aus der SHOPWARE DB.
              */
 
-            $builder = $this->getOrdersOfItem($ordernumber, $date_from);
+            // Hole alle Artikelnummern aus dem Shop als Array
+            /** @var \Doctrine\DBAL\Connection $connection */
+            $connection = $this->container->get('dbal_connection');
+            $builder = $connection->createQueryBuilder();
+            $builder->select('sad.ordernumber')
+                ->from('s_articles_details', 'sad');
+
+            // Führe Anfrage auf der DB aus.
+            $stmt = $builder->execute();
+            $articles = $stmt->fetchAll();
+
+
+            // Berechne Algorithmus für ALLE Artikel aus dem Shop!
+            foreach ($articles as $article) {
+                $builder = $this->getOrdersOfItem($article['ordernumber'], $date_from);
+                $this->calculate($builder, $support_config, $confidence_config, $article);
+            }
+
 
         } else {
             /**
              * Lese daten aus der DB-Tabelle "apriori_liste".
              */
-            $builder = $this->getOtherOrders($ordernumber);
+            //$builder = $this->getOtherOrders();
         }
+
+
+    }
+
+    public function calculate($builder, $support_config, $confidence_config, $article) {
 
         // Führe Anfrage auf der DB aus.
         $stmt = $builder->execute();
         $ordersDataSet = $stmt->fetchAll();
-
 
         // Extrahiere alle Bestellnummern in den der aktuelle Artikel bestellt wurde.
         $arrayOfOrderIDs = [];
@@ -96,19 +123,7 @@ class CollectRecommendedProducts implements SubscriberInterface
         $arrayItemsInOrder = [];
         foreach ($arrayOfOrderIDs as $key => $orderID) {
 
-            if(!$otherData) {
-                /**
-                 * Die Abfrage aus dem IF part holt sich die Daten der orders aus der SHOPWARE DB.
-                 */
-
-                $builder = $this->getOrdernumbersOfOrder($orderID);
-
-            } else {
-                /**
-                 * Lese daten aus der DB-Tabelle "apriori_liste".
-                 */
-                $builder = $this->getOrdernumbersOfOtherOrder($orderID);
-            }
+            $builder = $this->getOrdernumbersOfOrder($orderID);
 
 
             $stmt = $builder->execute();
@@ -133,10 +148,6 @@ class CollectRecommendedProducts implements SubscriberInterface
         // Apriori Array
         $apriori = $associator->apriori();
 
-        //DEVELOP Ausgabe
-        $view->assign('develop', $apriori);
-        //DEVELOP Ausgabe ENDE
-
         $aprioriArticles = array();
 
         // !!!! Begrenze Anzahl auf 6 Artikel !!!!
@@ -152,10 +163,10 @@ class CollectRecommendedProducts implements SubscriberInterface
 
             // Wenn Artikel inaktiv etc überspringen...
             try {
-                $articleModule = Shopware()->Modules()->Articles();
-                $articleID = $articleModule->sGetArticleIdByOrderNumber($article_apriori);
-                $article = $articleModule->sGetArticleById($articleID);
-                $aprioriArticles[] = $article;
+                /*$resource = \Shopware\Components\Api\Manager::getResource('Article');
+                $article = $resource->getOneByNumber($article_apriori);
+                $aprioriArticles[] = $article;*/
+                $aprioriArticles[] = $article_apriori;
             } catch (\Exception $e) {
 
             }
@@ -163,19 +174,43 @@ class CollectRecommendedProducts implements SubscriberInterface
 
         // Sortiere Array so, dass das aktuelle Produkt immer als erstes im Array steht.
         foreach ($aprioriArticles as $key => $item) {
-            if($item['ordernumber'] === $ordernumber) {
+            if($item['ordernumber'] === $article) {
                 unset($aprioriArticles[$key]);
             }
         }
-        array_unshift($aprioriArticles , $sArticle);
+        array_unshift($aprioriArticles , $article);
 
+        //speichere die Ordernumbers im angelegten Attribute zum Artikel
+        $builder = $this->saveRecommendArticles($aprioriArticles);
+        $builder->execute();
 
-        // Übergebe Wete an View
-        //$view->assign('apriori', $apriori);
-        $view->assign('aprioriArticles', $aprioriArticles);
+    }
 
+    public function saveRecommendArticles($aprioriArticles) {
 
+        //lösche aktuellen artikel von position 0
+        // & speichere in neuer variable
+        $ordernumber = $aprioriArticles[0];
+        unset($aprioriArticles[0]);
 
+        $resource = \Shopware\Components\Api\Manager::getResource('Article');
+        $article = $resource->getOneByNumber($ordernumber);
+        $articleDetailsID = $article['mainDetailId'];
+
+        /*echo'<pre>';
+        var_dump($articleDetailsID);
+        echo'<pre>';
+        echo'###### Nächster Artikel ######';
+        echo '<br>';*/
+
+        /** @var \Doctrine\DBAL\Connection $connection */
+        $connection = $this->container->get('dbal_connection');
+        $builder = $connection->createQueryBuilder();
+        $builder->update('s_articles_attributes', 'saa')
+            ->set('saa.recommend_articles', '?')
+            ->setParameter(0, json_encode($aprioriArticles))
+            ->where('articledetailsID = \'' . $articleDetailsID . '\'');
+        return $builder;
     }
 
     /**
@@ -184,7 +219,7 @@ class CollectRecommendedProducts implements SubscriberInterface
      * @param $ordernumber
      * @return \Doctrine\DBAL\Query\QueryBuilder
      */
-    private function getOrdersOfItem($ordernumber, $date_from)
+    public function getOrdersOfItem($ordernumber, $date_from)
     {
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->container->get('dbal_connection');
@@ -199,25 +234,6 @@ class CollectRecommendedProducts implements SubscriberInterface
             ->andWhere('so.ordertime >= \'' . $date_from . '\'');
         return $builder;
     }
-
-    /**
-     * Wie Funktion "getOrdersOfItem" nur mit Daten aus der DB-Tabelle "apriori_liste"
-     * @param $ordernumber
-     * @return \Doctrine\DBAL\Query\QueryBuilder
-     */
-    private function getOtherOrders($ordernumber)
-    {
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->container->get('dbal_connection');
-        $builder = $connection->createQueryBuilder();
-        $builder->select('*')
-            ->from('apriori_liste', 'al')
-            ->where('al.articleordernumber = \'' . $ordernumber . '\'');
-        return $builder;
-    }
-
-
-
 
     /**
      * Diese Funktion gibt die Artikel einer Bestellung aus.
@@ -236,18 +252,5 @@ class CollectRecommendedProducts implements SubscriberInterface
             ->where('sod.ordernumber = \'' . $order . '\'');
         return $builder;
     }
-
-
-    private function getOrdernumbersOfOtherOrder($order)
-    {
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->container->get('dbal_connection');
-        $builder = $connection->createQueryBuilder();
-        $builder->select('ordernumber', 'articleordernumber')
-            ->from('apriori_liste', 'al')
-            ->where('al.ordernumber = \'' . $order . '\'');
-        return $builder;
-    }
-
 
 }

@@ -17,21 +17,21 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service class="PaulRecommend\Subscriber\CollectRecommendedProducts" id="paul_recommend.subscriber.collect_recommended_products">
-            <argument id="service_container" type="service"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
         <service class="Shopware_Controllers_Frontend_RecommendedBasket" id="shopware_controllers_frontend_recommended_basket">
             <call method="setFront">
                 <argument id="front" type="service"/>
             </call>
         </service>
 
-        <service class="PaulRecommend\Subscriber\CalculateRecommenderArticles" id="paul_recommend.subscriber.calculate_recommender_articles">
+        <service class="PaulRecommend\Subscriber\CalculateRecommenderArticlesCron" id="paul_recommend.subscriber.calculate_recommender_articles_cron">
             <argument id="service_container" type="service"/>
             <tag name="shopware.event_subscriber"/>
         </service>
+
+        <service class="PaulRecommend\Subscriber\LoadRecommendProducts" id="paul_recommend.subscriber.load_recommend_products">
+           <argument id="service_container" type="service"/>
+           <tag name="shopware.event_subscriber"/>
+       </service>
 
 
     </services>

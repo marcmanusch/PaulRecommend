@@ -4,10 +4,9 @@
 
     <cronjob>
         <name>Berrechne Recommender Artikel</name>
-        <action>CalculateRecommenderArticles</action>
+        <action>CalculateRecommenderArticlesCron</action>
         <active>true</active>
         <interval>604800</interval>
         <disableOnError>true</disableOnError>
     </cronjob>
-
 </cronjobs>

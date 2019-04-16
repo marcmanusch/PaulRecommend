@@ -66,6 +66,6 @@
 
 <h2>Apriori</h2>
 <pre>
-    {print_r($develop)}
+    {print_r($aprioriArticles)}
 </pre>*}
 <!-- Dev -->

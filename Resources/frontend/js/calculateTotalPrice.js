@@ -5,6 +5,6 @@ $('.selectproduct').on("change", function() {
         totalPrice += parseFloat($(this).data('price'), 10);
     });
 
-    $('.gesamtpreis').html(totalPrice);
+    $('.gesamtpreis').html(Math.round(totalPrice * 100) / 100);
 });
 

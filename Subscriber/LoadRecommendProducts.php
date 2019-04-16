@@ -63,10 +63,13 @@ class LoadRecommendProducts implements SubscriberInterface
 
             foreach($recomendArticles as $recomendArticle) {
 
-                $articleModule = Shopware()->Modules()->Articles();
-                $articleID = $articleModule->sGetArticleIdByOrderNumber($recomendArticle);
-                $article = $articleModule->sGetArticleById($articleID);
-                $aprioriArticles[] = $article;
+                try {
+                    $articleModule = Shopware()->Modules()->Articles();
+                    $articleID = $articleModule->sGetArticleIdByOrderNumber($recomendArticle);
+                    $article = $articleModule->sGetArticleById($articleID);
+                    $aprioriArticles[] = $article;
+
+                }catch (\Exception$e) {}
 
             }
 

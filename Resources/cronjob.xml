@@ -7,6 +7,6 @@
         <action>CalculateRecommenderArticlesCron</action>
         <active>true</active>
         <interval>604800</interval>
-        <disableOnError>true</disableOnError>
+        <disableOnError>false</disableOnError>
     </cronjob>
 </cronjobs>

@@ -52,8 +52,6 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
      */
     public function CalculateRecommenderArticles(\Shopware_Components_Cron_CronJob $job)
     {
-        //Testausgabe
-        echo('YES!');
 
         $config = $this->container->get('shopware.plugin.config_reader')->getByPluginName('PaulRecommend');
 
@@ -181,8 +179,7 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
         array_unshift($aprioriArticles , $article);
 
         //speichere die Ordernumbers im angelegten Attribute zum Artikel
-        $builder = $this->saveRecommendArticles($aprioriArticles);
-        $builder->execute();
+        $this->saveRecommendArticles($aprioriArticles);
 
     }
 
@@ -192,25 +189,29 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
         // & speichere in neuer variable
         $ordernumber = $aprioriArticles[0];
         unset($aprioriArticles[0]);
-
         $resource = \Shopware\Components\Api\Manager::getResource('Article');
-        $article = $resource->getOneByNumber($ordernumber);
-        $articleDetailsID = $article['mainDetailId'];
 
-        /*echo'<pre>';
-        var_dump($articleDetailsID);
-        echo'<pre>';
-        echo'###### Nächster Artikel ######';
-        echo '<br>';*/
+        try {
+            $article = $resource->getOneByNumber($ordernumber);
+            $articleDetailsID = $article['mainDetailId'];
 
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->container->get('dbal_connection');
-        $builder = $connection->createQueryBuilder();
-        $builder->update('s_articles_attributes', 'saa')
-            ->set('saa.recommend_articles', '?')
-            ->setParameter(0, json_encode($aprioriArticles))
-            ->where('articledetailsID = \'' . $articleDetailsID . '\'');
-        return $builder;
+            /*echo'<pre>';
+            var_dump($articleDetailsID);
+            echo'<pre>';
+            echo'###### Nächster Artikel ######';
+            echo '<br>';*/
+
+            /** @var \Doctrine\DBAL\Connection $connection */
+            $connection = $this->container->get('dbal_connection');
+            $builder = $connection->createQueryBuilder();
+            $builder->update('s_articles_attributes', 'saa')
+                ->set('saa.recommend_articles', '?')
+                ->setParameter(0, json_encode($aprioriArticles))
+                ->where('articledetailsID = \'' . $articleDetailsID . '\'');
+            $builder->execute();
+
+        } catch (\Exception $e){
+        }
     }
 
     /**

@@ -33,8 +33,8 @@
                 {$counter_checkbox = 1}
                 {foreach from=$aprioriArticles item=apriori_article}
                         <label for="checkbox{$counter_checkbox}">
-                <input id="checkbox{$counter_checkbox}" type="checkbox" name="recomendedArticles[]"
-                       value="{$apriori_article.ordernumber}" checked/>
+                <input class="selectproduct" id="checkbox{$counter_checkbox}" type="checkbox" name="recomendedArticles[]"
+                       value="{$apriori_article.ordernumber}" data-price={$apriori_article.price|replace:",":"."} checked/>
                             {if $sArticle.ordernumber == $apriori_article.ordernumber}
                                 <strong>Dieser Artikel</strong>
                                 :
@@ -48,7 +48,7 @@
                 {/foreach}
 
                 <div class="sum--price--container">
-                    <span class="sum--price">Gesamtpreis: {$sum_price|replace:".":","}€</span>
+                    <span class="sum--price">Gesamtpreis: <span class="gesamtpreis">{$sum_price|replace:".":","}</span>€</span>
                 </div>
 
                 <button class="buybox--button block btn action--to-basket is--primary is--icon-right is--center is--small"

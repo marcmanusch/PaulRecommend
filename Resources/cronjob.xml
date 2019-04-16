@@ -3,7 +3,7 @@
           xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/cronjob.xsd">
 
     <cronjob>
-        <name>Berrechne Recommender Artikel</name>
+        <name>Berechne Recommender Artikel</name>
         <action>CalculateRecommenderArticlesCron</action>
         <active>true</active>
         <interval>604800</interval>

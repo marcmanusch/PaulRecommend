@@ -2,24 +2,34 @@
     <h3 class="panel--title is--underline">Wird oft zusammen gekauft</h3>
     <div class="panel--body is--wide">
 
-        <!-- Passende Produkte -->
-        {assign var="sum_price" value="0"}
-        {$counter_div = 1}
-        {foreach from=$aprioriArticles item=apriori_article name=apri}
-            <div class="recommended-products" id="item{$counter_div}">
-                <a href="{$apriori_article.linkDetailsRewrited}">
-                    <img class="recommend--img" src="{$apriori_article.image.thumbnails[0].source}">
-                </a>
-            </div>
-            {if !$smarty.foreach.apri.last}
-                <div class="recommended-products-plus" id="item{$counter_div + 1}plus">
-                    <i class="icon--plus2 recommend--icon"></i>
-                </div>
-            {/if}
 
-            {$sum_price = $sum_price + $apriori_article.price_numeric}
-            {$counter_div = $counter_div + 1}
-        {/foreach}
+        <div class="product-slider" data-product-slider="true">
+            <div class="product-slider--container is--horizontal">
+                <!-- Product box will be placed here. -->
+
+                <!-- Passende Produkte -->
+                {assign var="sum_price" value="0"}
+                {$counter_div = 1}
+                {foreach from=$aprioriArticles item=apriori_article name=apri}
+                    <div class="product-slider--item">
+                        <div id="item{$counter_div}">
+                            <a href="{$apriori_article.linkDetailsRewrited}">
+                                <img class="recommend--img" src="{$apriori_article.image.thumbnails[0].source}">
+                            </a>
+                        </div>
+                        {*{if !$smarty.foreach.apri.last}
+                            <div class="recommended-products-plus" id="item{$counter_div + 1}plus">
+                                <i class="icon--plus2 recommend--icon"></i>
+                            </div>
+                        {/if}*}
+
+                        {$sum_price = $sum_price + $apriori_article.price_numeric}
+                        {$counter_div = $counter_div + 1}
+                    </div>
+                {/foreach}
+                <!-- Product box will be placed here. -->
+            </div>
+        </div>
 
     </div>
     <!-- Liste der passende Produkte -->
@@ -32,17 +42,18 @@
 
                 {$counter_checkbox = 1}
                 {foreach from=$aprioriArticles item=apriori_article}
-                        <label for="checkbox{$counter_checkbox}">
-                <input class="selectproduct" id="checkbox{$counter_checkbox}" type="checkbox" name="recomendedArticles[]"
-                       value="{$apriori_article.ordernumber}" data-price={$apriori_article.price|replace:",":"."} checked/>
-                            {if $sArticle.ordernumber == $apriori_article.ordernumber}
-                                <strong>Dieser Artikel</strong>
-                                :
-                            {/if}
-                            {$apriori_article.articleName} - {$apriori_article.price}
-                        </label>
-                <span class="checkbox--state"></span>
-
+                    <label for="checkbox{$counter_checkbox}">
+                        <input class="selectproduct" id="checkbox{$counter_checkbox}" type="checkbox"
+                               name="recomendedArticles[]"
+                               value="{$apriori_article.ordernumber}"
+                               data-price={$apriori_article.price|replace:",":"."} checked/>
+                        {if $sArticle.ordernumber == $apriori_article.ordernumber}
+                            <strong>Dieser Artikel</strong>
+                            :
+                        {/if}
+                        {$apriori_article.articleName} - {$apriori_article.price}
+                    </label>
+                    <span class="checkbox--state"></span>
                     <br/>
                     {$counter_checkbox = $counter_checkbox + 1}
                 {/foreach}

@@ -29,19 +29,21 @@ class Shopware_Controllers_Frontend_PaulRecommend extends Enlight_Controller_Act
         //Füge jeden Artikel dem Warenkorb hinzu
         foreach ($recomendedArticles as $article) {
 
-            // Hole den Warenkorb
-            $basketId = Shopware()->Modules()->Basket()->sAddArticle($article, 1);
+            try {
+                // Hole den Warenkorb
+                $basketId = Shopware()->Modules()->Basket()->sAddArticle($article, 1);
 
-            /* @var $attributeDataLoader AttributeDataLoader */
-            $attributeDataLoader = $this->get( "shopware_attribute.data_loader" );
+                /* @var $attributeDataLoader AttributeDataLoader */
+                $attributeDataLoader = $this->get( "shopware_attribute.data_loader" );
 
-            /* @var $attributeDataPersister AttributeDataPersister */
-            $attributeDataPersister = $this->get( "shopware_attribute.data_persister" );
+                /* @var $attributeDataPersister AttributeDataPersister */
+                $attributeDataPersister = $this->get( "shopware_attribute.data_persister" );
 
-            // Speichere die Artikel in den Warenkorb
-            $attributes = $attributeDataLoader->load( "s_order_basket_attributes", $basketId );
-            $attributeDataPersister->persist( $attributes, "s_order_basket_attributes", $basketId );
+                // Speichere die Artikel in den Warenkorb
+                $attributes = $attributeDataLoader->load( "s_order_basket_attributes", $basketId );
+                $attributeDataPersister->persist( $attributes, "s_order_basket_attributes", $basketId );
 
+            } catch (Exception $e) {}
         }
 
         // Zum Warenkorb weiterleiten, nachdem alle Artikel im Warenkorb sind

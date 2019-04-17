@@ -4,6 +4,7 @@
 
 
         <div class="product-slider" data-product-slider="true">
+
             <div class="product-slider--container is--horizontal">
                 <!-- Product box will be placed here. -->
 
@@ -11,17 +12,17 @@
                 {assign var="sum_price" value="0"}
                 {$counter_div = 1}
                 {foreach from=$aprioriArticles item=apriori_article name=apri}
-                    <div class="product-slider--item">
-                        <div id="item{$counter_div}">
+                    <div class="product-slider--item paulrecommenditem" id="item{$counter_div}">
+                        <div>
                             <a href="{$apriori_article.linkDetailsRewrited}">
                                 <img class="recommend--img" src="{$apriori_article.image.thumbnails[0].source}">
                             </a>
                         </div>
-                        {*{if !$smarty.foreach.apri.last}
-                            <div class="recommended-products-plus" id="item{$counter_div + 1}plus">
+                        {if !$smarty.foreach.apri.first}
+                            <div class="recommended-products-plus" id="item{$counter_div}plus">
                                 <i class="icon--plus2 recommend--icon"></i>
                             </div>
-                        {/if}*}
+                        {/if}
 
                         {$sum_price = $sum_price + $apriori_article.price_numeric}
                         {$counter_div = $counter_div + 1}

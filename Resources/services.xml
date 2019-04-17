@@ -12,11 +12,6 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service class="PaulRecommend\Subscriber\CollectConfig" id="paul_recommend.subscriber.collect_config">
-            <argument id="service_container" type="service"/>
-            <tag name="shopware.event_subscriber"/>
-        </service>
-
         <service class="Shopware_Controllers_Frontend_RecommendedBasket" id="shopware_controllers_frontend_recommended_basket">
             <call method="setFront">
                 <argument id="front" type="service"/>

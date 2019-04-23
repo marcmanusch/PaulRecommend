@@ -52,7 +52,7 @@
                             <strong>Dieser Artikel</strong>
                             :
                         {/if}
-                        {$apriori_article.articleName} - {$apriori_article.price}
+                        [{$apriori_article.ordernumber}] {$apriori_article.articleName} - {$apriori_article.price} €
                     </label>
                     <span class="checkbox--state"></span>
                     <br/>

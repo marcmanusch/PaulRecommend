@@ -157,17 +157,13 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
         }
 
         // Hole Artikelinfomrationen für Artikel aus dem Apriori-Algorithmus
-        foreach ($apriori[($anzahlAprioriAusgabe) - 1][0] as $article_apriori) {
+        //foreach ($apriori[($anzahlAprioriAusgabe) - 1][0] as $article_apriori) {
+        foreach ($apriori as $article_apriori) {
 
             // Wenn Artikel inaktiv etc überspringen...
             try {
-                /*$resource = \Shopware\Components\Api\Manager::getResource('Article');
-                $article = $resource->getOneByNumber($article_apriori);
-                $aprioriArticles[] = $article;*/
                 $aprioriArticles[] = $article_apriori;
-            } catch (\Exception $e) {
-
-            }
+            } catch (\Exception $e) {}
         }
 
         // Sortiere Array so, dass das aktuelle Produkt immer als erstes im Array steht.

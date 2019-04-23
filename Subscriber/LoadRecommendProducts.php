@@ -49,6 +49,8 @@ class LoadRecommendProducts implements SubscriberInterface
 
         // get plugin settings
         $active = $config['active'];
+        $minDisplay = $config['minDisplay'];
+        $useMax = $config['useMax'];
 
         // Hole die aktuelle ordernumber (Bestellnummer / MPN) aus der aktuellen View.
         $sArticle = $view->getAssign('sArticle');
@@ -61,17 +63,35 @@ class LoadRecommendProducts implements SubscriberInterface
             $recomendArticles = $stmt->fetchAll();
             $recomendArticles = json_decode($recomendArticles[0]['recommend_articles'], true);
 
-            foreach($recomendArticles as $recomendArticle) {
-
-                try {
-                    $articleModule = Shopware()->Modules()->Articles();
-                    $articleID = $articleModule->sGetArticleIdByOrderNumber($recomendArticle);
-                    $article = $articleModule->sGetArticleById($articleID);
-                    $aprioriArticles[] = $article;
-
-                }catch (\Exception$e) {}
-
+            /**
+             * wähle zufällig Artikel aus
+             * Die Länge des Arrays ist variabel
+             */
+            //letze abziehen da immer leer
+            $laengeArray = count($recomendArticles) - 1;
+            if($laengeArray <= $minDisplay) {
+                $laengeArray = $minDisplay;
             }
+
+            //Auswahl des Arrays mit Zufallszahl (zwischen 2 und länge des Arrays)
+            $arrayNummer = random_int($minDisplay, $laengeArray);
+
+            if($useMax) {
+                $arrayNummer = count($recomendArticles) - 1;
+            }
+
+            foreach($recomendArticles[$arrayNummer] as $recomendArticle) {
+
+                foreach($recomendArticle as $key => $ordernumberApri) {
+                    try {
+                        $articleModule = Shopware()->Modules()->Articles();
+                        $articleID = $articleModule->sGetArticleIdByOrderNumber($ordernumberApri);
+                        $article = $articleModule->sGetArticleById($articleID);
+                        $aprioriArticles[$key] = $article;
+                    }catch (\Exception$e) {}
+                }
+            }
+
 
             // Sortiere Array so, dass das aktuelle Produkt immer als erstes im Array steht.
             foreach ($aprioriArticles as $key => $item) {

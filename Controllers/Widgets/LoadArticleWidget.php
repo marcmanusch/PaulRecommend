@@ -94,6 +94,7 @@ class Shopware_Controllers_Widgets_LoadArticleWidget extends Enlight_Controller_
 
             // Übergebe Wete an View OHNE CACHE!!
             $view->aprioriArticles = $aprioriArticles;
+            $view->sArticle = $sArticle;
         }
 
     }

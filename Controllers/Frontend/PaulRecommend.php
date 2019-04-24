@@ -58,8 +58,7 @@ class Shopware_Controllers_Frontend_PaulRecommend extends Enlight_Controller_Act
     public function getWhitelistedCSRFActions()
     {
         return [
-            'addArticles',
-            'index'
+            'addArticles'
         ];
     }
 }

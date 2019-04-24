@@ -2,7 +2,5 @@
 
 {block name="frontend_detail_index_bundle"}
     {$smarty.block.parent}
-    {if $aprioriArticles|count > 1}
-        {include file="frontend/detail/recommend.tpl"}
-    {/if}
+    {action module="widgets" controller="LoadArticleWidget" action="loadArticles" sArticle=$sArticle}
 {/block}

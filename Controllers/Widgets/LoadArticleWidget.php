@@ -2,50 +2,42 @@
 /**
  * Created by PhpStorm.
  * User: marc
- * Date: 16.04.19
- * Time: 12:10
+ * Date: 12.11.18
+ * Time: 21:41
  */
 
-namespace PaulRecommend\Subscriber;
-
+use Shopware\Components\CSRFWhitelistAware;
 use Enlight\Event\SubscriberInterface;
-use PaulRecommend\Vendor\Apriori;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadRecommendProducts implements SubscriberInterface
-{
-    /** @var  ContainerInterface */
-    private $container;
 
-    /**
-     * Frontend contructor.
-     * @param ContainerInterface $container
-     **/
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
+/**
+ * Class Shopware_Controllers_Widgets_LoadArticleWidget
+ */
+class Shopware_Controllers_Widgets_LoadArticleWidget extends Enlight_Controller_Action implements CSRFWhitelistAware {
+
 
     /**
      * @return array
      */
-    public static function getSubscribedEvents()
+    public function getWhitelistedCSRFActions()
     {
         return [
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend_Detail' => 'onPostDispatchDetail',
+            'loadArticles'
         ];
     }
 
-    /**
-     * @param \Enlight_Event_EventArgs $args
-     */
-    public function onPostDispatchDetail(\Enlight_Event_EventArgs $args)
+
+    public function loadArticlesAction()
     {
-        /** @var \Enlight_Controller_Action $controller */
-        $controller = $args->get('subject');
-        $view = $controller->View();
-        $view->addTemplateDir($this->pluginDirectory . '/Resources/Views');
-        $config = $this->container->get('shopware.plugin.config_reader')->getByPluginName('PaulRecommend');
+
+        $view = $this->View();
+        $view->loadTemplate("frontend/detail/recommend.tpl");
+
+        $request = $this->Request();
+        $sArticle = $request->getParam('sArticle');
+
+        $configReader = $this->container->get('shopware.plugin.config_reader');
+        $config = $configReader->getByPluginName('PaulRecommend');
 
         // get plugin settings
         $active = $config['active'];
@@ -53,7 +45,6 @@ class LoadRecommendProducts implements SubscriberInterface
         $useMax = $config['useMax'];
 
         // Hole die aktuelle ordernumber (Bestellnummer / MPN) aus der aktuellen View.
-        $sArticle = $view->getAssign('sArticle');
         $mainDetailId = $sArticle['articleDetailsID'];
         $ordernumber = $sArticle['ordernumber'];
 
@@ -101,10 +92,10 @@ class LoadRecommendProducts implements SubscriberInterface
             }
             array_unshift($aprioriArticles , $sArticle);
 
-            // Übergebe Wete an View
-            $view->assign('aprioriArticles', $aprioriArticles);
-
+            // Übergebe Wete an View OHNE CACHE!!
+            $view->aprioriArticles = $aprioriArticles;
         }
+
     }
 
     /**

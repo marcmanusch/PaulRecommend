@@ -9,41 +9,9 @@
             <label>Aktiv</label>
         </element>
 
-        <element required="true" type="select" >
-            <name>minDisplay</name>
-            <label lang="de">Minimum Artikel</label>
-            <value>1</value>
-            <store>
-                <option>
-                    <value>1</value>
-                    <label lang="de">1</label>
-                </option>
-                <option>
-                    <value>2</value>
-                    <label lang="de">2</label>
-                </option>
-                <option>
-                    <value>3</value>
-                    <label lang="de">3</label>
-                </option>
-                <option>
-                    <value>4</value>
-                    <label lang="de">4</label>
-                </option>
-                <option>
-                    <value>5</value>
-                    <label lang="de">5</label>
-                </option>
-                <option>
-                    <value>6</value>
-                    <label lang="de">6</label>
-                </option>
-            </store>
-        </element>
-
         <element type="boolean">
             <name>useMax</name>
-            <label>zeige größt mögliche Anzahl</label>
+            <label>Zeige Vorschlag mit höchster Konfidenz</label>
         </element>
 
 
@@ -60,6 +28,11 @@
         <element type="date">
             <name>date</name>
             <label>Datum ab</label>
+        </element>
+
+        <element type="text">
+            <name>filter</name>
+            <label>Artikelnummern ausschließen (Komma getrennt)</label>
         </element>
 
     </elements>

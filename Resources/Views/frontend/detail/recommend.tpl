@@ -1,4 +1,4 @@
-{if $aprioriArticles}
+{if $aprioriArticles|count > 1}
     <div class="panel has--border recommend-panel">
         <h3 class="panel--title is--underline">Wird oft zusammen gekauft</h3>
         <div class="panel--body is--wide">

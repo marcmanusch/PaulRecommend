@@ -3,10 +3,17 @@
         xsi:noNamespaceSchemaLocation="../../../engine/Shopware/Components/Plugin/schema/plugin.xsd">
     <label lang="de">Produktempfehlungen für Kunden</label>
 
-    <version>1.0.3</version>
+    <version>1.1.0</version>
     <link>https://github.com/marcmanusch</link>
     <author>Marc Manusch</author>
     <compatibility minVersion="5.2.0"/>
+
+    <changelog version="1.1.0">
+        <changes>CHANGE: Berechnung der Vorgeschlagenen Produkte ist nun korrekt.
+            Bislang wurden nur die "häufig" gekauften Artikel angezeigt ohne Gewichtung.
+        </changes>
+        <changes>Change: Config-Parameter wurden geändert.</changes>
+    </changelog>
 
     <changelog version="1.0.3">
         <changes>FIX: Die Version 1.0.2 konnte nicht im Produktivmodus (Cache aktiv) verwendet werden.</changes>

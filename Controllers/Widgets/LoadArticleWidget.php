@@ -13,7 +13,8 @@ use Enlight\Event\SubscriberInterface;
 /**
  * Class Shopware_Controllers_Widgets_LoadArticleWidget
  */
-class Shopware_Controllers_Widgets_LoadArticleWidget extends Enlight_Controller_Action implements CSRFWhitelistAware {
+class Shopware_Controllers_Widgets_LoadArticleWidget extends Enlight_Controller_Action implements CSRFWhitelistAware
+{
 
 
     /**
@@ -41,60 +42,63 @@ class Shopware_Controllers_Widgets_LoadArticleWidget extends Enlight_Controller_
 
         // get plugin settings
         $active = $config['active'];
-        $minDisplay = $config['minDisplay'];
         $useMax = $config['useMax'];
 
         // Hole die aktuelle ordernumber (Bestellnummer / MPN) aus der aktuellen View.
         $mainDetailId = $sArticle['articleDetailsID'];
         $ordernumber = $sArticle['ordernumber'];
 
-        if($active) {
+        if ($active) {
             $builder = $this->loaData($mainDetailId);
             $stmt = $builder->execute();
             $recomendArticles = $stmt->fetchAll();
             $recomendArticles = json_decode($recomendArticles[0]['recommend_articles'], true);
 
-            /**
-             * wähle zufällig Artikel aus
-             * Die Länge des Arrays ist variabel
-             */
-            //letze abziehen da immer leer
-            $laengeArray = count($recomendArticles) - 1;
-            if($laengeArray <= $minDisplay) {
-                $laengeArray = $minDisplay;
-            }
-
             //Auswahl des Arrays mit Zufallszahl (zwischen 2 und länge des Arrays)
-            $arrayNummer = random_int($minDisplay, $laengeArray);
-
-            if($useMax) {
-                $arrayNummer = count($recomendArticles) - 1;
+            if(count($recomendArticles) - 1 < 0) {
+                $arrayNummer = 0;
+            } else {
+                $arrayNummer = random_int(0, count($recomendArticles) - 1);
             }
 
-            foreach($recomendArticles[$arrayNummer] as $recomendArticle) {
 
-                foreach($recomendArticle as $key => $ordernumberApri) {
+            if ($useMax) {
+                $temp[] = $recomendArticles[0];
+                $recomendArticles = $temp;
+                $arrayNummer = 0;
+            }
+
+            /*echo '<pre>';
+            echo var_dump($recomendArticles);
+            echo '</pre>';*/
+
+
+
+            $aprioriArticles = [];
+            foreach ($recomendArticles as $key => $recomendArticle) {
+                foreach ($recomendArticle['consequent'] as $recommendedItems) {
                     try {
                         $articleModule = Shopware()->Modules()->Articles();
-                        $articleID = $articleModule->sGetArticleIdByOrderNumber($ordernumberApri);
+                        $articleID = $articleModule->sGetArticleIdByOrderNumber($recommendedItems);
                         $article = $articleModule->sGetArticleById($articleID);
-                        $aprioriArticles[$key] = $article;
-                    }catch (\Exception$e) {}
+                        $aprioriArticles[$key][] = $article;
+                    } catch (\Exception$e) {
+                    }
                 }
-            }
 
 
-            // Sortiere Array so, dass das aktuelle Produkt immer als erstes im Array steht.
-            foreach ($aprioriArticles as $key => $item) {
-                if($item['ordernumber'] === $ordernumber) {
-                    unset($aprioriArticles[$key]);
-                }
             }
-            array_unshift($aprioriArticles , $sArticle);
+
+            $aprioriArticles = $aprioriArticles[$arrayNummer];
+
+
+            array_unshift($aprioriArticles, $sArticle);
+
 
             // Übergebe Wete an View OHNE CACHE!!
             $view->aprioriArticles = $aprioriArticles;
             $view->sArticle = $sArticle;
+
         }
 
     }

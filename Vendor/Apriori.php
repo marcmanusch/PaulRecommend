@@ -141,7 +141,7 @@ class Apriori implements Associator
                 $this->rules[] = [
                     self::ARRAY_KEY_ANTECEDENT => $antecedent,
                     self::ARRAY_KEY_CONSEQUENT => $consequent,
-                    self::ARRAY_KEY_SUPPORT => $this->support($consequent),
+                    self::ARRAY_KEY_SUPPORT => $this->support($frequent),
                     self::ARRAY_KEY_CONFIDENCE => $confidence,
                 ];
             }
@@ -342,4 +342,5 @@ class Apriori implements Associator
     {
         return array_diff($set1, $set2) == array_diff($set2, $set1);
     }
+
 }

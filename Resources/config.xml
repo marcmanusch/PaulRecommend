@@ -16,7 +16,7 @@
 
         <element type="boolean">
             <name>dump</name>
-            <label>Drump "/backend/cron/"</label>
+            <label>Dump "/backend/cron/"</label>
         </element>
 
         <element type="text">

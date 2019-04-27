@@ -53,6 +53,8 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
     public function CalculateRecommenderArticles(\Shopware_Components_Cron_CronJob $job)
     {
 
+        $start = $this->startTimer();
+
         $config = $this->container->get('shopware.plugin.config_reader')->getByPluginName('PaulRecommend');
 
 
@@ -181,6 +183,8 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
              */
         }
 
+        return 'Laufzeit: ' . gmdate("H:i:s", $this->stopTimer($start));
+
     }
 
 
@@ -258,6 +262,19 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
             ->from('s_articles_details', 'sad');
         $stmt = $builder->execute();
         return $stmt->fetchAll();
+    }
+
+    private function startTimer()
+    {
+        list($usec, $sec) = explode(" ", microtime());
+        return ((float)$usec + (float)$sec);
+    }
+
+    private function stopTimer($start, $round=2)
+    {
+        $endtime = $this->startTimer()-$start;
+        $round   = pow(10, $round);
+        return round($endtime*$round)/$round;
     }
 
 }

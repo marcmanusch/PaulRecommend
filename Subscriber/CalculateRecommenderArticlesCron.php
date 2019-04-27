@@ -63,6 +63,7 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
         $date_from = $config['date'];
         $otherData = $config['otherData'];
         $filterTransactions = $config['filter'];
+        $dump = $config['dump'];
 
         // Array mit ausgeschlossenen Artikeln
         $filterTransactions = explode(",", $filterTransactions);
@@ -142,32 +143,36 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
                 $this->saveAssociationRules($rules, $ordernumber);
             }
 
-            /**
-             * TEST Dump
-             */
-           /* if($samples) {
-                echo '########## Neuer Artikel ########';
-                echo '<pre>';
-                echo '----- Samples -----';
-                echo '<br>';
-                echo var_dump($samples);
-                echo '----- Samples ENDE -----';
-                echo '<br>';
-                echo '<br>';
-                echo '----- getRules() -----';
-                echo '<br>';
-                echo '----- Support:'.$support_config.' -----';
-                echo '<br>';
-                echo '----- Confidence:'.$confidence_config.' -----';
-                echo '<br>';
-                echo var_dump($associator->getRules());
-                echo '<br>';
-                echo '----- getRules() ENDE-----';
-                echo '</pre>';
-                echo '<br>';
-                echo '########## FERTIG ########';
-                echo '<br>';
-            }*/
+            if($dump) {
+                /**
+                 *  Dump rules and samples
+                 */
+                if($samples) {
+                    echo '<br>';
+                    echo '########## Start ##########';
+                    echo '<pre>';
+                    echo '----- Samples -----';
+                    echo '<br>';
+                    echo var_dump($samples);
+                    echo '----- Samples ENDE -----';
+                    echo '<br>';
+                    echo '<br>';
+                    echo '----- getRules() -----';
+                    echo '<br>';
+                    echo '----- Support:'.$support_config.' -----';
+                    echo '<br>';
+                    echo '----- Confidence:'.$confidence_config.' -----';
+                    echo '<br>';
+                    echo var_dump($associator->getRules());
+                    echo '<br>';
+                    echo '----- getRules() ENDE-----';
+                    echo '</pre>';
+                    echo '<br>';
+                    echo '########## FERTIG ##########';
+                    echo '<br>';
+                }
+            }
+
 
         } else {
             /**

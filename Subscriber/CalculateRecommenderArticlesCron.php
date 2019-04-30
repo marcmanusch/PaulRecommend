@@ -107,14 +107,25 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
             // Lösche alle Artikel aus dem Array, die nicht zugeordnet werden können
             unset($clearedTransactions[0]);
 
-            /*echo '<pre>';
-            echo var_dump($transactions);
-            echo '</pre>';*/
-
             // Entferne Filterartikel aus Transaktionen
             foreach ($clearedTransactions as $key => $data) {
                 foreach ($data as $article) {
                     foreach ($filterTransactions as $filteritem) {
+                        if($article == $filteritem) {
+                            $fields = array_flip($clearedTransactions[$key]);
+                            unset($fields[$filteritem]);
+                            $clearedTransactions[$key] = array_flip($fields);
+                        }
+                    }
+                }
+            }
+
+            // Remove filter vouchers (articles) from the transaction list
+            $filterVouchers = $this->getFilterVoucherCodes();
+
+            foreach ($clearedTransactions as $key => $data) {
+                foreach ($data as $article) {
+                    foreach ($filterVouchers as $filteritem) {
                         if($article == $filteritem) {
                             $fields = array_flip($clearedTransactions[$key]);
                             unset($fields[$filteritem]);
@@ -260,6 +271,22 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
         $builder = $connection->createQueryBuilder();
         $builder->select('sad.ordernumber')
             ->from('s_articles_details', 'sad');
+        $stmt = $builder->execute();
+        return $stmt->fetchAll();
+    }
+
+    /*
+     * This function return an array with all voucher codes of the shop.
+     * If an code is deleted, the filter has to be set manually, by adding
+     * the code to the filter.
+     */
+    private function getFilterVoucherCodes () {
+
+        /** @var \Doctrine\DBAL\Connection $connection */
+        $connection = $this->container->get('dbal_connection');
+        $builder = $connection->createQueryBuilder();
+        $builder->select('sev.vouchercode')
+            ->from('s_emarketing_vouchers', 'sev');
         $stmt = $builder->execute();
         return $stmt->fetchAll();
     }

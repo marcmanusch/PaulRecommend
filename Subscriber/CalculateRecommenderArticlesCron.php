@@ -54,6 +54,7 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
     {
 
         $start = $this->startTimer();
+        $timer_end = 0;
 
         $config = $this->container->get('shopware.plugin.config_reader')->getByPluginName('PaulRecommend');
 
@@ -156,6 +157,8 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
                 $this->saveAssociationRules($rules, $ordernumber);
             }
 
+            $timer_end = gmdate("H:i:s", $this->stopTimer($start));
+
             if($dump) {
                 /**
                  *  Dump rules and samples
@@ -164,19 +167,19 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
                     echo '<br>';
                     echo '########## Start ##########';
                     echo '<pre>';
-                    echo '----- Samples -----';
+                    echo '----- Samples Anzahl: '.count($samples).'-----';
                     echo '<br>';
                     echo var_dump($samples);
                     echo '----- Samples ENDE -----';
                     echo '<br>';
                     echo '<br>';
-                    echo '----- getRules() -----';
+                    echo '----- getRules() Anzahl: '.count($rules).'-----';
                     echo '<br>';
                     echo '----- Support:'.$support_config.' -----';
                     echo '<br>';
                     echo '----- Confidence:'.$confidence_config.' -----';
                     echo '<br>';
-                    echo var_dump($associator->getRules());
+                    echo var_dump($rules);
                     echo '<br>';
                     echo '----- getRules() ENDE-----';
                     echo '</pre>';
@@ -194,7 +197,7 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
              */
         }
 
-        return 'Laufzeit: ' . gmdate("H:i:s", $this->stopTimer($start));
+        return 'Laufzeit: ' . $timer_end;
 
     }
 
@@ -275,7 +278,7 @@ class CalculateRecommenderArticlesCron implements SubscriberInterface
         return $stmt->fetchAll();
     }
 
-    /*
+    /*v
      * This function return an array with all voucher codes of the shop.
      * If an code is deleted, the filter has to be set manually, by adding
      * the code to the filter.

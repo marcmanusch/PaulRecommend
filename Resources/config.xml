@@ -39,5 +39,30 @@
             <label>Artikelnummern ausschließen (Komma getrennt)</label>
         </element>
 
+        <element type="boolean">
+            <name>otherData</name>
+            <label>Nutze ERP-Daten (PlentyMarkets)</label>
+        </element>
+
+        <element type="text">
+            <name>api_user</name>
+            <label>PlentyMakrts API-Benutzer</label>
+        </element>
+
+        <element type="text">
+            <name>api_password</name>
+            <label>PlentyMakrts API-Passwort</label>
+        </element>
+
+        <element type="text">
+            <name>api_url</name>
+            <label>PlentyMakrts API-URL</label>
+        </element>
+
+        <element type="text">
+            <name>filter_plenty_sku</name>
+            <label>SKU Filter (Komma getrennt)</label>
+        </element>
+
     </elements>
 </config>

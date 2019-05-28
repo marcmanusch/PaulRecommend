@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="GIGAHOST">
+  <component name="PublishConfigData" autoUpload="Always" serverName="Staging">
     <serverData>
       <paths name="GIGAHOST">
         <serverdata>
           <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$/../PaulRecommend" web="/" />
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="Staging">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/custom/plugins/PaulRecommend" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

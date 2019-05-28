@@ -12,6 +12,7 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Template_Manager;
 use Shopware\Components\Plugin\ConfigReader;
 use PaulRecommend\Vendor\Apriori;
+use PaulRecommend\Vendor\ApiClient\PlentyApiClient;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 

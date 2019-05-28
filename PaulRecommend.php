@@ -8,10 +8,14 @@
 
 namespace PaulRecommend;
 
+use Doctrine\ORM\Tools\SchemaTool;
+use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Plugin;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Shopware\Components\Plugin\Context\UninstallContext;
+use PaulRecommend\Models\PlentyMarketsOrders;
+
 
 class PaulRecommend extends Plugin
 {
@@ -23,6 +27,8 @@ class PaulRecommend extends Plugin
     {
         $service = $this->container->get('shopware_attribute.crud_service');
         $service->update('s_articles_attributes', 'recommend_articles', 'string');
+
+        $this->updateSchema();
     }
 
     /**
@@ -36,8 +42,38 @@ class PaulRecommend extends Plugin
 
     public function uninstall(UninstallContext $context)
     {
-        $service = $this->container->get('shopware_attribute.crud_service');
-        $service->delete('s_articles_attributes', 'recommend_articles');
+        try {
+            $service = $this->container->get('shopware_attribute.crud_service');
+            $service->delete('s_articles_attributes', 'recommend_articles');
+
+            /** @var ModelManager $entityManager */
+            $entityManager = $this->container->get('models');
+
+            $tool = new SchemaTool($entityManager);
+
+            $classMetaData = [
+                $entityManager->getClassMetadata(PlentyMarketsOrders::class)
+            ];
+
+            $tool->dropSchema($classMetaData);
+
+        }catch (\Exception $e) {}
+
     }
+
+    private function updateSchema()
+    {
+        /** @var ModelManager $entityManager */
+        $entityManager = $this->container->get('models');
+
+        $tool = new SchemaTool($entityManager);
+
+        $classMetaData = [
+            $entityManager->getClassMetadata(PlentyMarketsOrders::class)
+        ];
+
+        $tool->createSchema($classMetaData);
+    }
+
 
 }

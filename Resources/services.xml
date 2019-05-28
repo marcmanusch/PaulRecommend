@@ -12,7 +12,14 @@
             <tag name="shopware.event_subscriber"/>
         </service>
 
-        <service class="PaulRecommend\Subscriber\CalculateRecommenderArticlesCron" id="paul_recommend.subscriber.calculate_recommender_articles_cron">
+        <service class="PaulRecommend\Subscriber\CalculateRecommenderArticlesCron"
+                 id="paul_recommend.subscriber.calculate_recommender_articles_cron">
+            <argument id="service_container" type="service"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service class="PaulRecommend\Subscriber\GetPlentyMarketsOrdersCron"
+                 id="paul_recommend.subscriber.get_plenty_markets_orders_cron">
             <argument id="service_container" type="service"/>
             <tag name="shopware.event_subscriber"/>
         </service>

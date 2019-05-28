@@ -11,10 +11,18 @@
     </cronjob>
 
     <cronjob>
+        <name>Berechne Recommender Artikel Plentymarkets</name>
+        <action>CalculateRecommenderArticlesPlentymarketsCron</action>
+        <active>true</active>
+        <interval>604800</interval>
+        <disableOnError>false</disableOnError>
+    </cronjob>
+
+    <cronjob>
         <name>PlentyMarkets Import</name>
         <action>GetPlentyMarketsOrdersCron</action>
         <active>true</active>
-        <interval>604800</interval>
+        <interval>86400</interval>
         <disableOnError>false</disableOnError>
     </cronjob>
 

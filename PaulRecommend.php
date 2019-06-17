@@ -27,6 +27,22 @@ class PaulRecommend extends Plugin
     {
         $service = $this->container->get('shopware_attribute.crud_service');
         $service->update('s_articles_attributes', 'recommend_articles', 'string');
+        $service->update('s_articles_attributes', 'show_recommend_articles', 'boolean', [
+            'label' => 'Blende passende Artikel aus',
+
+            //user has the opportunity to translate the attribute field for each shop
+            'translatable' => true,
+
+            //attribute will be displayed in the backend module
+            'displayInBackend' => true,
+
+            //numeric position for the backend view, sorted ascending
+            'position' => 0,
+
+            //user can modify the attribute in the free text field module
+            'custom' => true,
+
+        ]);
 
         $this->updateSchema();
     }
